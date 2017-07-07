@@ -1,2 +1,2 @@
 # PlasterTemplate
-Personal Plaster template
+Personal Plaster templates

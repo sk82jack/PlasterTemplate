@@ -6,6 +6,7 @@ Properties {
     if (-not $ProjectRoot) {
         $ProjectRoot = $PSScriptRoot
     }
+    <#
     $CredExist = Test-Path C:\PSModules\PSGalleryCred.xml
     If ($CredExist) {
         $PSGalleryCred = Import-Clixml C:\PSModules\PSGalleryCred.xml
@@ -15,6 +16,7 @@ Properties {
         $PSGalleryCred | Export-Clixml C:\PSModules\PSGalleryCred.xml
     }
     $Global:ApiKey = $PSGalleryCred.GetNetworkCredential().Password
+    #>
     $ModuleFolder = Split-Path -Path $ENV:BHPSModuleManifest -Parent
     $PSVersion = $PSVersionTable.PSVersion.Major
     $TestFile = "TestResults_PS$PSVersion`_$TimeStamp.xml"

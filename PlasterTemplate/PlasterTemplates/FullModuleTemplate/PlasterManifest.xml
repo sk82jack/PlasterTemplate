@@ -16,7 +16,7 @@
     <parameter name="Version" type="text" prompt="Initial module version" default="0.1.0" />
   </parameters>
   <content>
-	<message>      Creating folder structure    </message>
+	  <message>      Creating folder structure    </message>
     <file source='' destination='docs\images'/>
     <file source='' destination='Tests'/>
 	  <file source='' destination='.vscode'/>
@@ -32,7 +32,7 @@
 		  encoding='UTF8-NoBOM'
       nestedModules='@()'/>
     <file source='BasicTest.ps1' destination='Tests\${PLASTER_PARAM_ModuleName}.Tests.ps1'/>
-    <file source='Help.Tests.ps1' destination ='Tests\Help.Tests.ps1'>
+    <file source='Help.Tests.ps1' destination='Tests\Help.Tests.ps1'/>
     <file source='template.psm1' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1'/>
     <file source='Template.Format.ps1xml' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.Format.ps1xml'/>
     <file source='settings.json' destination='.vscode\settings.json'/>

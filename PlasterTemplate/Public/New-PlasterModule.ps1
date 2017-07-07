@@ -49,5 +49,11 @@ Function New-PlasterModule {
         New-Item -Path "$DestinationFolder\$ModuleName" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
         Write-Verbose "Invoke-Plaster: Templatepath '$ProjectRoot\PlasterTemplates\$TemplatePath' DestinationPath '$DestinationFolder\$ModuleName'"
         Invoke-Plaster -TemplatePath "$ProjectRoot\PlasterTemplates\$TemplatePath" -DestinationPath "$DestinationFolder\$ModuleName"
+        Set-Location "$DestinationFolder\$ModuleName"
+        git init
+        git add .
+        git commit -m 'Initial commit'
+        git remote add origin "https://github.com/sk82jack/$ModuleName.git"
+        "Create an empty repo on Github called '$ModuleName' and then run the command 'git push -u origin master'"
     }
 }

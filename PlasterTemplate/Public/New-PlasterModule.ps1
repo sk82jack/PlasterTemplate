@@ -7,7 +7,7 @@ Function New-PlasterModule {
 
         [Parameter()]
         [string]
-        $DestinationFolder = "C:\PSModules"
+        $DestinationFolder = "D:\PSModules"
     )
     DynamicParam {
         # Set the dynamic parameters' name

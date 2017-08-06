@@ -2,7 +2,7 @@
 <plasterManifest schemaVersion="1.0" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
   <metadata>
     <name>FullModuleTemplate</name>
-    <id>7ef5cd71-0bbd-4fd6-aef1-fb4776594fe1</id>
+    <id>7de5edf1-afba-4c1f-a360-29fdc60f7d6f</id>
     <version>0.1.0</version>
     <title>Full Module Template</title>
     <description></description>
@@ -29,8 +29,7 @@
 		  rootModule='${PLASTER_PARAM_ModuleName}.psm1'
 		  author='$PLASTER_PARAM_FullName'
 		  description='$PLASTER_PARAM_ModuleDesc'
-		  encoding='UTF8-NoBOM'
-      nestedModules='@()'/>
+		  encoding='UTF8-NoBOM'/>
     <file source='BasicTest.ps1' destination='Tests\${PLASTER_PARAM_ModuleName}.Tests.ps1'/>
     <file source='Help.Tests.ps1' destination='Tests\Help.Tests.ps1'/>
     <file source='template.psm1' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1'/>

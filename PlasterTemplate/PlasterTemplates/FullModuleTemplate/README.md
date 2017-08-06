@@ -5,16 +5,14 @@
 
 ## Getting Started
 
-You can install the module using the following command.
-``` PowerShell
+Install from the PSGallery and Import the module
+```powershell
     Install-Module <%= $PLASTER_PARAM_ModuleName %>
-```
-
-Now that the module is installed you can import the module to use the functions
-``` PowerShell
     Import-Module <%= $PLASTER_PARAM_ModuleName %>
 ```
-
 ## More Information
 
-For more information please contact Jack Denton
+For more information
+
+* [github.com/sk82jack/<%= $PLASTER_PARAM_ModuleName %>](https://github.com/sk82jack/<%= $PLASTER_PARAM_ModuleName %>)
+* [sk82jack.github.io](https://sk82jack.github.io)

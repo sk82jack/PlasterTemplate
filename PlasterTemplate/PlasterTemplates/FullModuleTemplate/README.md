@@ -38,7 +38,7 @@ PS> Uninstall-Module -Name <%= $PLASTER_PARAM_ModuleName %>
 
 ## Contributing to <%= $PLASTER_PARAM_ModuleName %>
 
-Interested in contributing? Read how you can [Contribute](contributing.md) to <%= $PLASTER_PARAM_ModuleName %>
+Interested in contributing? Read how you can [Contribute](Contributing.md) to <%= $PLASTER_PARAM_ModuleName %>
 
 ## Release History
 
@@ -46,4 +46,4 @@ A detailed release history is contained in the [Change Log](CHANGELOG.md).
 
 ## License
 
-<%= $PLASTER_PARAM_ModuleName %> is provided under the [MIT license](LICENSE.md).
+<%= $PLASTER_PARAM_ModuleName %> is provided under the [MIT license](LICENSE).

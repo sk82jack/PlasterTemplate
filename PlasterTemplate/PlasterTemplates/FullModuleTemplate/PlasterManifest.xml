@@ -11,6 +11,7 @@
   </metadata>
   <parameters>
     <parameter name="FullName" type="text" prompt="Module author's name" default="Jack Denton"/>
+    <parameter name="GitHubUserName" type="text" prompt="Module author's GitHub user account name" default="sk82jack">
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
   </parameters>
@@ -29,7 +30,6 @@
 		  rootModule='${PLASTER_PARAM_ModuleName}.psm1'
 		  author='$PLASTER_PARAM_FullName'
 		  description='$PLASTER_PARAM_ModuleDesc'
-		  companyName='Public Health England'
 		  encoding='UTF8-NoBOM'/>
     <file source='BasicTest.ps1' destination='Tests\${PLASTER_PARAM_ModuleName}.Tests.ps1'/>
     <file source='Help.Tests.ps1' destination ='Tests\Help.Tests.ps1'/>
@@ -42,10 +42,10 @@
     <file source='psake.ps1' destination='Build\psake.ps1'/>
     <file source='Install-PSDepend.ps1' destination='Build\Helpers\Install-PSDepend.ps1'/>
     <file source='LICENSE' destination='LICENSE'/>
-    <file source='CHANGELOG.md' destination='CHANGELOG.md'/>
     <file source='.gitignore' destination='.gitignore'/>
     <file source='.gitattributes' destination='.gitattributes'/>
     <templateFile source='README.md' destination='README.md'/>
     <templateFile source='Contributing.md' destination='Contributing.md'/>
+    <templateFile source='CHANGELOG.md' destination='CHANGELOG.md'/>
 	</content>
 </plasterManifest>

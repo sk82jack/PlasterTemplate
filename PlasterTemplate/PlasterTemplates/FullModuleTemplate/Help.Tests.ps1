@@ -1,11 +1,11 @@
-$projectRoot = Resolve-Path "$PSScriptRoot\.."
-$moduleRoot = Split-Path (Resolve-Path "$projectRoot\*\*.psd1")
-$moduleName = Split-Path $moduleRoot -Leaf
+$moduleRoot = $env:BHPSModulePath
+$moduleName = $env:BHProjectName
+$moduleManifest = $env:BHPSModuleManifest
 
-Import-Module (Join-Path $moduleRoot "$moduleName.psd1") -force
+Remove-Module -Name $moduleName -Force -ErrorAction SilentlyContinue
+Import-Module -Name $moduleManifest
 
 Describe "Help tests for $moduleName" -Tags Build {
-
     $functions = Get-Command -Module $moduleName -CommandType Function
     foreach ($Function in $Functions) {
         $help = Get-Help $Function.name

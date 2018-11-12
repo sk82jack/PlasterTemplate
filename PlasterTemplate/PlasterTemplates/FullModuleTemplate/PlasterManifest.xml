@@ -2,7 +2,7 @@
 <plasterManifest schemaVersion="1.0" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
   <metadata>
     <name>FullModuleTemplate</name>
-    <id>7de5edf1-afba-4c1f-a360-29fdc60f7d6f</id>
+    <id>7ef5cd71-0bbd-4fd6-aef1-fb4776594fe1</id>
     <version>0.1.0</version>
     <title>Full Module Template</title>
     <description></description>
@@ -13,32 +13,39 @@
     <parameter name="FullName" type="text" prompt="Module author's name" default="Jack Denton"/>
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
-    <parameter name="Version" type="text" prompt="Initial module version" default="0.1.0" />
   </parameters>
   <content>
-	  <message>      Creating folder structure    </message>
+	<message>      Creating folder structure    </message>
     <file source='' destination='docs\images'/>
     <file source='' destination='Tests'/>
+    <file source='' destination='Build'/>
 	  <file source='' destination='.vscode'/>
     <file source='' destination='${PLASTER_PARAM_ModuleName}\Public'/>
     <file source='' destination='${PLASTER_PARAM_ModuleName}\Private'/>
     <message>      Deploying common files    </message>
     <newModuleManifest
 		  destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1'
-		  moduleVersion='$PLASTER_PARAM_Version'
+		  moduleVersion='0.1.0'
 		  rootModule='${PLASTER_PARAM_ModuleName}.psm1'
 		  author='$PLASTER_PARAM_FullName'
 		  description='$PLASTER_PARAM_ModuleDesc'
+		  companyName='Public Health England'
 		  encoding='UTF8-NoBOM'/>
     <file source='BasicTest.ps1' destination='Tests\${PLASTER_PARAM_ModuleName}.Tests.ps1'/>
-    <file source='Help.Tests.ps1' destination='Tests\Help.Tests.ps1'/>
+    <file source='Help.Tests.ps1' destination ='Tests\Help.Tests.ps1'/>
     <file source='template.psm1' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1'/>
     <file source='Template.Format.ps1xml' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.Format.ps1xml'/>
     <file source='settings.json' destination='.vscode\settings.json'/>
-    <file source='build.ps1' destination='build.ps1'/>
-    <file source='deploy.PSDeploy.ps1' destination='deploy.PSDeploy.ps1'/>
-    <file source='psake.ps1' destination='psake.ps1'/>
+    <file source='Start-Build.ps1' destination='Build\Start-Build.ps1'/>
+    <file source='deploy.PSDeploy.ps1' destination='Build\deploy.PSDeploy.ps1'/>
+    <file source='build.requirements.psd1' destination='Build\build.requirements.psd1'/>
+    <file source='psake.ps1' destination='Build\psake.ps1'/>
+    <file source='Install-PSDepend.ps1' destination='Build\Helpers\Install-PSDepend.ps1'/>
     <file source='LICENSE' destination='LICENSE'/>
+    <file source='CHANGELOG.md' destination='CHANGELOG.md'/>
+    <file source='.gitignore' destination='.gitignore'/>
+    <file source='.gitattributes' destination='.gitattributes'/>
     <templateFile source='README.md' destination='README.md'/>
+    <templateFile source='Contributing.md' destination='Contributing.md'/>
 	</content>
 </plasterManifest>

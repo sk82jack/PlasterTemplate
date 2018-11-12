@@ -1,10 +1,12 @@
-$projectRoot = Resolve-Path "$PSScriptRoot\.."
-$moduleRoot = Split-Path (Resolve-Path "$projectRoot\*\*.psm1")
-$moduleName = Split-Path $moduleRoot -Leaf
+$moduleName = $env:BHProjectName
+$moduleRoot = $env:BHPSModulePath
+$moduleManifest = $env:BHPSModuleManifest
 
-Describe "General project validation: $moduleName" -Tags Build, Unit {
+Remove-Module -Name $moduleName -Force -ErrorAction SilentlyContinue
 
-    $scripts = Get-ChildItem $moduleRoot -Include *.ps1, *.psd1 -Recurse
+Describe "General project validation: $moduleName" {
+
+    $scripts = Get-ChildItem $moduleRoot -Include *.ps1, *.psm1, *.psd1 -Recurse
 
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | Foreach-Object {@{file = $_}}
@@ -20,6 +22,6 @@ Describe "General project validation: $moduleName" -Tags Build, Unit {
     }
 
     It "Module '$moduleName' can import cleanly" {
-        {Import-Module (Join-Path $moduleRoot "$moduleName.psm1") -force } | Should Not Throw
+        {Import-Module $moduleManifest -force } | Should Not Throw
     }
 }

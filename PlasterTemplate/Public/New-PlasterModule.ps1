@@ -1,21 +1,25 @@
 Function New-PlasterModule {
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]
         $ModuleName,
 
         [Parameter()]
         [string]
-        $DestinationFolder = "D:\PSModules"
+        $DestinationFolder = "$env:HOME\Documents\GitHub",
+
+        [Parameter()]
+        [string]
+        $GitHubUserName = 'sk82jack'
     )
     DynamicParam {
         # Set the dynamic parameters' name
         $ParameterName = 'TemplatePath'
 
-        # Create the dictionary 
+        # Create the dictionary
         $RuntimeParameterDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-        
+
         # Create the collection of attributes
         $AttributeCollection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
 
@@ -29,7 +33,8 @@ Function New-PlasterModule {
 
         # Generate and set the ValidateSet
         $Script:ProjectRoot = Resolve-Path "$PSScriptRoot\.."
-        $PlasterTemplates = Get-ChildItem -Path "$ProjectRoot\PlasterTemplates" -Directory
+        $PlasterTemplatePath = Join-Path -Path $ProjectRoot -ChildPath 'PlasterTemplates'
+        $PlasterTemplates = Get-ChildItem -Path $PlasterTemplatePath -Directory
         $ValidateSetAttribute = New-Object System.Management.Automation.ValidateSetAttribute($PlasterTemplates.Name)
 
         # Add the ValidateSet to the attributes collection
@@ -45,15 +50,18 @@ Function New-PlasterModule {
         $TemplatePath = $PsBoundParameters[$ParameterName]
     }
     Process {
-        Write-Verbose "Creating module folder: $DestinationFolder\$ModuleName"
-        New-Item -Path "$DestinationFolder\$ModuleName" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-        Write-Verbose "Invoke-Plaster: Templatepath '$ProjectRoot\PlasterTemplates\$TemplatePath' DestinationPath '$DestinationFolder\$ModuleName'"
-        Invoke-Plaster -TemplatePath "$ProjectRoot\PlasterTemplates\$TemplatePath" -DestinationPath "$DestinationFolder\$ModuleName"
-        Set-Location "$DestinationFolder\$ModuleName"
+        $ModulePath = Join-Path -Path $DestinationFolder -ChildPath $ModuleName
+        Write-Verbose "Creating module folder: $ModulePath"
+        New-Item -Path $ModulePath -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+
+        $ModuleTemplatePath = Join-Path -Path $PlasterTemplatePath -ChildPath $TemplatePath
+        Write-Verbose "Invoke-Plaster: Templatepath '$ModuleTemplatePath' DestinationPath '$ModulePath'"
+        Invoke-Plaster -TemplatePath $ModuleTemplatePath -DestinationPath $ModulePath
+        Set-Location $ModulePath
         git init
         git add .
         git commit -m 'Initial commit'
-        git remote add origin "https://github.com/sk82jack/$ModuleName.git"
+        git remote add origin "https://github.com/$GitHubUserName/$ModuleName.git"
         "Create an empty repo on Github called '$ModuleName' and then run the command 'git push -u origin master'"
     }
 }

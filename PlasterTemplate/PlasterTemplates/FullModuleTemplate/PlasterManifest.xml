@@ -11,7 +11,7 @@
   </metadata>
   <parameters>
     <parameter name="FullName" type="text" prompt="Module author's name" default="Jack Denton"/>
-    <parameter name="GitHubUserName" type="text" prompt="Module author's GitHub user account name" default="sk82jack">
+    <parameter name="GitHubUserName" type="text" prompt="Module author's GitHub user account name" default="sk82jack"/>
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
   </parameters>

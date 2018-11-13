@@ -32,11 +32,20 @@ Task Test -Depends Init {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
     # Gather test results
+    $TestFile = "TestResults.xml"
     $CodeFiles = (Get-ChildItem $ENV:BHModulePath -Recurse -Include "*.psm1", "*.ps1").FullName
-    $TestResults = Invoke-Pester -Path $ENV:BHProjectPath\Tests -CodeCoverage $CodeFiles -PassThru
+    $Params = @{
+        Script                       = "$ENV:BHProjectPath\Tests"
+        CodeCoverage                 = $CodeFiles
+        CodeCoverageOutputFile       = "$ProjectRoot\$TestFile"
+        CodeCoverageOutputFileFormat = 'NUnitXml'
+        Show                         = 'Fails'
+        PassThru                     = $true
+    }
+    $TestResults = Invoke-Pester @Params
     [Net.ServicePointManager]::SecurityProtocol = $SecurityProtocol
 
-    Remove-Item "$ENV:BHProjectPath\$TestFile" -Force -ErrorAction SilentlyContinue
+    #Remove-Item "$ENV:BHProjectPath\$TestFile" -Force -ErrorAction SilentlyContinue
     # Failed tests?
     # Need to tell psake or it will proceed to the deployment. Danger!
     if ($TestResults.FailedCount -gt 0) {
@@ -45,7 +54,16 @@ Task Test -Depends Init {
     "`n"
 }
 
-Task Build -Depends Test {
+Task BuildDocs -depends Test {
+    $DocFolder = "$env:BHModulePath\docs"
+    if (!(Test-Path $DocFolder)) {
+        New-Item -Path $DocFolder -ItemType Directory
+    }
+    Import-Module -Name $env:BHPSModuleManifest -Force
+    New-MarkdownHelp -Module $env:BHProjectName -OutputFolder $DocFolder
+}
+
+Task Build -Depends BuildDocs {
     $lines
 
     # Compile seperate ps1 files into the psm1
@@ -92,19 +110,6 @@ Task Build -Depends Test {
 Task Deploy -Depends Build {
     $lines
 
-    # Register the ProGet repository if it's not already registered
-    $PHERepo = Get-PSRepository -Name PHERepo -ErrorAction SilentlyContinue
-    If ($PHERepo) {
-        $PHERepo | Unregister-PSRepository
-    }
-    $RepositoryParams = @{
-        'Name'               = 'PHERepo'
-        'SourceLocation'     = 'http://psrepositorychi01.phe.gov.uk/nuget/PowerShell/'
-        'PublishLocation'    = 'http://psrepositorychi01.phe.gov.uk/nuget/PowerShell/'
-        'InstallationPolicy' = 'Trusted'
-    }
-    "`nAdding repository '{0}'" -f $RepositoryParams.SourceLocation
-    Register-PSRepository @RepositoryParams
     $Params = @{
         Path    = "$ENV:BHProjectPath\Build"
         Force   = $true

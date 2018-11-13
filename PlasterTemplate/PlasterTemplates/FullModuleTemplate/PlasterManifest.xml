@@ -42,6 +42,7 @@
     <file source='psake.ps1' destination='Build\psake.ps1'/>
     <file source='Install-PSDepend.ps1' destination='Build\Helpers\Install-PSDepend.ps1'/>
     <file source='LICENSE' destination='LICENSE'/>
+    <file source='azure-pipelines.yml' destination='azure-pipelines.yml'/>
     <file source='.gitignore' destination='.gitignore'/>
     <file source='.gitattributes' destination='.gitattributes'/>
     <templateFile source='README.md' destination='README.md'/>

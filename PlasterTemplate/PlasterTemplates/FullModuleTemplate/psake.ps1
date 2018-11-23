@@ -33,14 +33,16 @@ Task Test -Depends Init {
 
     # Gather test results
     $TestFile = "TestResults.xml"
+    $CoverageFile = "TestCoverage.xml"
     $CodeFiles = (Get-ChildItem $ENV:BHModulePath -Recurse -Include "*.psm1", "*.ps1").FullName
     $Params = @{
-        Script                       = "$ENV:BHProjectPath\Tests"
-        CodeCoverage                 = $CodeFiles
-        CodeCoverageOutputFile       = "$ProjectRoot\$TestFile"
-        CodeCoverageOutputFileFormat = 'NUnitXml'
-        Show                         = 'Fails'
-        PassThru                     = $true
+        Path                   = "$ENV:BHProjectPath\Tests"
+        OutputFile             = "$ENV:BHProjectPath\$TestFile"
+        OutputFormat           = 'NUnitXml'
+        CodeCoverage           = $CodeFiles
+        CodeCoverageOutputFile = "$ENV:BHProjectPath\$CoverageFile"
+        Show                   = 'Fails'
+        PassThru               = $true
     }
     $TestResults = Invoke-Pester @Params
     [Net.ServicePointManager]::SecurityProtocol = $SecurityProtocol

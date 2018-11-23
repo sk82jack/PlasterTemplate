@@ -12,7 +12,6 @@
     'psake'         = @{ DependencyType = 'PSGalleryNuget' }
     'PSDeploy'      = @{ DependencyType = 'PSGalleryNuget' }
     'BuildHelpers'  = @{ DependencyType = 'PSGalleryNuget' }
-    'platyPS'       = @{ DependencyType = 'PSGalleryNuget' }
     'Pester'        = @{
         DependencyType = 'PSGalleryNuget'
         Version        = '4.4.2'

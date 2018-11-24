@@ -12,6 +12,7 @@
   <parameters>
     <parameter name="FullName" type="text" prompt="Module author's name" default="Jack Denton"/>
     <parameter name="GitHubUserName" type="text" prompt="Module author's GitHub user account name" default="sk82jack"/>
+    <parameter name="GitHubEmail" type="text" prompt="Module author's GitHub email address" default="sk82jack@hotmail.com">
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
   </parameters>
@@ -41,7 +42,6 @@
     <file source='Start-Build.ps1' destination='Build\Start-Build.ps1'/>
     <file source='deploy.PSDeploy.ps1' destination='Build\deploy.PSDeploy.ps1'/>
     <file source='build.requirements.psd1' destination='Build\build.requirements.psd1'/>
-    <file source='psake.ps1' destination='Build\psake.ps1'/>
     <file source='Install-PSDepend.ps1' destination='Build\Helpers\Install-PSDepend.ps1'/>
     <file source='LICENSE' destination='LICENSE'/>
     <file source='azure-pipelines.yml' destination='azure-pipelines.yml'/>
@@ -50,5 +50,6 @@
     <templateFile source='README.md' destination='README.md'/>
     <templateFile source='Contributing.md' destination='Contributing.md'/>
     <templateFile source='CHANGELOG.md' destination='CHANGELOG.md'/>
+    <templateFile source='psake.ps1' destination='Build\psake.ps1'/>
 	</content>
 </plasterManifest>

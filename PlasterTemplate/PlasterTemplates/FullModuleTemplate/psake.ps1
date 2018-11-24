@@ -11,6 +11,10 @@ Properties {
     if ($ENV:BHCommitMessage -match "!verbose") {
         $Verbose = @{Verbose = $True}
     }
+
+    git config user.email '<%= $PLASTER_PARAM_GitHubEmail %>'
+    git config user.name '<%= $PLASTER_PARAM_GitHubUserName %>'
+    $GitHubUrl = 'https://{0}@github.com/<%= $PLASTER_PARAM_GitHubUserName %>/<%= $PLASTER_PARAM_ModuleName %>.git' -f $ENV:GITHUB_PAT
 }
 
 Task Default -Depends Test
@@ -63,6 +67,10 @@ Task BuildDocs -depends Test {
     }
     Import-Module -Name $env:BHPSModuleManifest -Force
     New-MarkdownHelp -Module $env:BHProjectName -OutputFolder $DocFolder
+
+    git add "$DocFolder/*"
+    git commit -m "Update docs for release"
+    git push $GitHubUrl HEAD.master
 }
 
 Task Build -Depends BuildDocs {

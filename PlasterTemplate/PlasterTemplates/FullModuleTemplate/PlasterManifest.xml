@@ -19,6 +19,8 @@
 	<message>      Creating folder structure    </message>
     <file source='' destination='docs\images'/>
     <file source='' destination='Tests'/>
+    <file source='' destination='Tests\Public'/>
+    <file source='' destination='Tests\Private'/>
     <file source='' destination='Build'/>
 	  <file source='' destination='.vscode'/>
     <file source='' destination='${PLASTER_PARAM_ModuleName}\Public'/>

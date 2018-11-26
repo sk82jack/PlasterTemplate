@@ -14,7 +14,6 @@ Properties {
 
     git config user.email '<%= $PLASTER_PARAM_GitHubEmail %>'
     git config user.name '<%= $PLASTER_PARAM_GitHubUserName %>'
-    $GitHubUrl = 'https://{0}@github.com/<%= $PLASTER_PARAM_GitHubUserName %>/<%= $PLASTER_PARAM_ModuleName %>.git' -f $ENV:GITHUB_PAT
 }
 
 Task Default -Depends Test
@@ -24,6 +23,27 @@ Task Init {
     Set-Location $ENV:BHProjectPath
     "Build System Details:"
     Get-Item ENV:BH*
+    "`n"
+}
+
+Task SetBuildVersion -Depends Init {
+    $lines
+
+    "`n`tSetting git repository url"
+    if (!$ENV:GITHUB_PAT) {
+        Write-Error "GitHub personal access token not found"
+    }
+    $GitHubUrl = 'https://{0}@github.com/<%= $PLASTER_PARAM_GitHubUserName %>/<%= $PLASTER_PARAM_ModuleName %>.git' -f $ENV:GITHUB_PAT
+
+    "`tSetting build version"
+    $BuildVersionPath = "$ENV:BHProjectPath\BUILDVERSION.md"
+    "|Build Version|`n|---|`n|$ENV:BUILD_NAME|" | Out-File -FilePath $BuildVersionPath -Force
+
+    "`tPushing build version to GitHub"
+    git add $BuildVersionPath
+    git commit -m "Bump build version`n***NO_CI***"
+    # --porcelain is to stop git sending output to stderr
+    git push $GitHubUrl HEAD:master --porcelain
     "`n"
 }
 
@@ -60,7 +80,50 @@ Task Test -Depends Init {
     "`n"
 }
 
-Task BuildDocs -depends Test {
+Task Build -Depends Test {
+    $lines
+    "`n"
+
+    # Compile seperate ps1 files into the psm1
+    $Stringbuilder = [System.Text.StringBuilder]::new()
+    $Folders = Get-ChildItem -Path $env:BHModulePath -Directory
+    foreach ($Folder in $Folders.Name) {
+        [void]$Stringbuilder.AppendLine("Write-Verbose 'Importing from [$env:BHModulePath\$Folder]'" )
+        if (Test-Path "$env:BHModulePath\$Folder") {
+            $Files = Get-ChildItem "$env:BHModulePath\$Folder\*.ps1"
+            foreach ($File in $Files) {
+                $Name = $File.Name
+                "`tImporting [.$Name]"
+                [void]$Stringbuilder.AppendLine("# .$Name")
+                [void]$Stringbuilder.AppendLine([System.IO.File]::ReadAllText($File.fullname))
+            }
+        }
+        "`tRemoving folder [$env:BHModulePath\$Folder]"
+        Remove-Item -Path "$env:BHModulePath\$Folder" -Recurse -Force
+    }
+    $ModulePath = Join-Path -Path $env:BHModulePath -ChildPath "$env:BHProjectName.psm1"
+    "`tCreating module [$ModulePath]"
+    Set-Content -Path $ModulePath -Value $Stringbuilder.ToString()
+
+    # Load the module, read the exported functions & aliases, update the psd1 FunctionsToExport & AliasesToExport
+    "`tSetting module functions"
+    Set-ModuleFunctions
+    "`tSetting module aliases"
+    Set-ModuleAliases
+
+    # Set the module version from the release tag
+    "`tUpdating the module manifest with the new version number"
+    [version]$ReleaseVersion = git describe --tags
+    $GalleryVersion = Get-NextNugetPackageVersion -Name $env:BHProjectName -ErrorAction Stop
+    if ($ReleaseVersion -le $GalleryVersion) {
+        Write-Error "Gallery version is higher than the release version. The release version must be increased"
+    }
+    Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $ReleaseVersion -ErrorAction stop
+    git add $env:BHPSModuleManifest
+    "`n"
+}
+
+Task BuildDocs -depends Build {
     $lines
     Import-Module -Name $env:BHPSModuleManifest -Force
     $DocFolder = "$env:BHModulePath\docs"
@@ -77,7 +140,7 @@ Task BuildDocs -depends Test {
     }
     $null = Remove-Item @parameters
 
-    "`n`tBuilding documentation"
+    "`tBuilding documentation"
     if (!(Test-Path $DocFolder)) {
         New-Item -Path $DocFolder -ItemType Directory
     }
@@ -95,70 +158,40 @@ Task BuildDocs -depends Test {
     }
     $YMLtext | Set-Content -Path "$env:BHModulePath\mkdocs.yml"
     Copy-Item -Path "$env:BHModulePath\README.md" -Destination "$DocFolder\index.md" -Force
-    Update-Changelog -Path "$env:BHModulePath\CHANGELOG.md" -ReleaseVersion ################################################################
+
+    [version]$ReleaseVersion = git describe --tags
+    Update-Changelog -Path "$env:BHModulePath\CHANGELOG.md" -ReleaseVersion $ReleaseVersion
     Convertfrom-Changelog -Path "$env:BHModulePath\CHANGELOG.md" -OutputPath "$DocFolder\ChangeLog.md"
+
+    "`tSetting git repository url"
+    if (!$ENV:GITHUB_PAT) {
+        Write-Error "GitHub personal access token not found"
+    }
+    $GitHubUrl = 'https://{0}@github.com/<%= $PLASTER_PARAM_GitHubUserName %>/<%= $PLASTER_PARAM_ModuleName %>.git' -f $ENV:GITHUB_PAT
 
     "`tPushing built docs to GitHub"
     git add "$DocFolder\*"
     git add "$env:BHModulePath\mkdocs.yml"
     git add "$env:BHModulePath\CHANGELOG.md"
-    git commit -m "Update docs for release ***NO_CI***"
-    git push $GitHubUrl HEAD.master
-    "`n"
-}
-
-Task Build -Depends BuildDocs {
-    $lines
-
-    # Compile seperate ps1 files into the psm1
-    $Stringbuilder = [System.Text.StringBuilder]::new()
-    $Folders = Get-ChildItem -Path $env:BHModulePath -Directory
-    foreach ($Folder in $Folders.Name) {
-        [void]$Stringbuilder.AppendLine("Write-Verbose 'Importing from [$env:BHModulePath\$Folder]'" )
-        if (Test-Path "$env:BHModulePath\$Folder") {
-            $Files = Get-ChildItem "$env:BHModulePath\$Folder\*.ps1"
-            foreach ($File in $Files) {
-                $Name = $File.Name
-                "  Importing [.$Name]"
-                [void]$Stringbuilder.AppendLine("# .$Name")
-                [void]$Stringbuilder.AppendLine([System.IO.File]::ReadAllText($File.fullname))
-            }
-        }
-        "  Removing folder [$env:BHModulePath\$Folder]"
-        Remove-Item -Path "$env:BHModulePath\$Folder" -Recurse -Force
-    }
-    $ModulePath = Join-Path -Path $env:BHModulePath -ChildPath "$env:BHProjectName.psm1"
-    "  Creating module [$ModulePath]"
-    Set-Content -Path $ModulePath -Value $Stringbuilder.ToString()
-
-    # Load the module, read the exported functions & aliases, update the psd1 FunctionsToExport & AliasesToExport
-    "  Setting module functions"
-    Set-ModuleFunctions
-    "  Setting module aliases"
-    Set-ModuleAliases
-
-    # Bump the module version if we didn't already
-    Try {
-        $GalleryVersion = Find-NugetPackage -Name $env:BHProjectName -PackageSourceUrl 'http://psrepositorychi01.phe.gov.uk/nuget/PowerShell' -IsLatest -ErrorAction Stop
-        $GitlabVersion = Get-MetaData -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -ErrorAction Stop
-        if ($GalleryVersion.Version -ge $GitlabVersion) {
-            Step-ModuleVersion -Path $env:BHPSModuleManifest -By Build
-        }
-    }
-    Catch {
-        "Failed to update version for '$env:BHProjectName': $_.`nContinuing with existing version"
-    }
+    git commit -m "Bump version to $ReleaseVersion`n***NO_CI***"
+    # --porcelain is to stop git sending output to stderr
+    git push $GitHubUrl HEAD:master --porcelain
     "`n"
 }
 
 Task Deploy -Depends Build {
     $lines
 
+    "`n`tTesting for PowerShell Gallery API key"
+    if (!$ENV:GITHUB_PAT) {
+        Write-Error "PowerShell Gallery API key not found"
+    }
+
     $Params = @{
         Path    = "$ENV:BHProjectPath\Build"
         Force   = $true
         Recurse = $false # We keep psdeploy artifacts, avoid deploying those : )
     }
-    "`nInvoking PSDeploy"
+    "`tInvoking PSDeploy"
     Invoke-PSDeploy @Verbose @Params
 }

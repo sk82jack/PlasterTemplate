@@ -1,12 +1,8 @@
-$moduleName = $env:BHProjectName
-$moduleRoot = $env:BHPSModulePath
-$moduleManifest = $env:BHPSModuleManifest
+Remove-Module -Name $env:BHProjectName -Force -ErrorAction SilentlyContinue
 
-Remove-Module -Name $moduleName -Force -ErrorAction SilentlyContinue
+Describe "General project validation: $env:BHProjectName" {
 
-Describe "General project validation: $moduleName" {
-
-    $scripts = Get-ChildItem $moduleRoot -Include *.ps1, *.psm1, *.psd1 -Recurse
+    $scripts = Get-ChildItem $env:BHPSModulePath -Include *.ps1, *.psm1, *.psd1 -Recurse
 
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | Foreach-Object {@{file = $_}}
@@ -21,7 +17,7 @@ Describe "General project validation: $moduleName" {
         $errors.Count | Should Be 0
     }
 
-    It "Module '$moduleName' can import cleanly" {
-        {Import-Module $moduleManifest -force } | Should Not Throw
+    It "Module '$env:BHProjectName' can import cleanly" {
+        {Import-Module $env:BHPSModuleManifest -force } | Should Not Throw
     }
 }

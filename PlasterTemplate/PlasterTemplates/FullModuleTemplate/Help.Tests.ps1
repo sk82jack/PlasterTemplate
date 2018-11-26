@@ -1,12 +1,8 @@
-$moduleRoot = $env:BHPSModulePath
-$moduleName = $env:BHProjectName
-$moduleManifest = $env:BHPSModuleManifest
+Remove-Module -Name $env:BHProjectName -Force -ErrorAction SilentlyContinue
+Import-Module -Name $env:BHPSModuleManifest
 
-Remove-Module -Name $moduleName -Force -ErrorAction SilentlyContinue
-Import-Module -Name $moduleManifest
-
-Describe "Help tests for $moduleName" -Tags Build {
-    $functions = Get-Command -Module $moduleName -CommandType Function
+Describe "Help tests for $env:BHProjectName" -Tags Build {
+    $functions = Get-Command -Module $env:BHProjectName -CommandType Function
     foreach ($Function in $Functions) {
         $help = Get-Help $Function.name
         Context $help.name {

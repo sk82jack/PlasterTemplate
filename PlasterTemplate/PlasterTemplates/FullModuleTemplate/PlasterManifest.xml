@@ -12,7 +12,7 @@
   <parameters>
     <parameter name="FullName" type="text" prompt="Module author's name" default="Jack Denton"/>
     <parameter name="GitHubUserName" type="text" prompt="Module author's GitHub user account name" default="sk82jack"/>
-    <parameter name="GitHubEmail" type="text" prompt="Module author's GitHub email address" default="sk82jack@hotmail.com">
+    <parameter name="GitHubEmail" type="text" prompt="Module author's GitHub email address" default="sk82jack@hotmail.com"/>
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
   </parameters>

@@ -12,8 +12,8 @@ Properties {
         $Verbose = @{Verbose = $True}
     }
 
-    git config user.email '<%= $PLASTER_PARAM_GitHubEmail %>'
-    git config user.name '<%= $PLASTER_PARAM_GitHubUserName %>'
+    git config user.email 'pipeline@example.com'
+    git config user.name 'pipeline'
 }
 
 Task Default -Depends Test
@@ -119,13 +119,14 @@ Task Build -Depends Test {
         Write-Error "Gallery version is higher than the release version. The release version must be increased"
     }
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $ReleaseVersion -ErrorAction stop
-    git add $env:BHPSModuleManifest
     "`n"
 }
 
 Task BuildDocs -depends Build {
     $lines
-    Import-Module -Name $env:BHPSModuleManifest -Force
+    "`n`tImporting the module and start building the yaml"
+    "`t`tImporting from '$env:BHPSModuleManifest'"
+    Import-Module -Name $env:BHPSModuleManifest -Global -Force -ErrorAction 'Stop'
     $DocFolder = "$env:BHModulePath\docs"
     $YMLtext = (Get-Content "$env:BHModulePath\header-mkdocs.yml") -join "`n"
     $YMLtext = "$YMLtext`n  - Change Log: ChangeLog.md`n"
@@ -160,30 +161,52 @@ Task BuildDocs -depends Build {
     Copy-Item -Path "$env:BHModulePath\README.md" -Destination "$DocFolder\index.md" -Force
 
     [version]$ReleaseVersion = git describe --tags
-    Update-Changelog -Path "$env:BHModulePath\CHANGELOG.md" -ReleaseVersion $ReleaseVersion
-    Convertfrom-Changelog -Path "$env:BHModulePath\CHANGELOG.md" -OutputPath "$DocFolder\ChangeLog.md"
 
-    "`tSetting git repository url"
-    if (!$ENV:GITHUB_PAT) {
-        Write-Error "GitHub personal access token not found"
+    $ChangeLogData = Get-ChangeLogData
+    if (-not ($ChangeLogData.Unreleased.Data.psobject.properties.value -ne '')) {
+        Write-Error 'Cannot perform a deploy without updating the changelog'
     }
-    $GitHubUrl = 'https://{0}@github.com/<%= $PLASTER_PARAM_GitHubUserName %>/<%= $PLASTER_PARAM_ModuleName %>.git' -f $ENV:GITHUB_PAT
 
-    "`tPushing built docs to GitHub"
-    git add "$DocFolder\*"
-    git add "$env:BHModulePath\mkdocs.yml"
-    git add "$env:BHModulePath\CHANGELOG.md"
-    git commit -m "Bump version to $ReleaseVersion`n***NO_CI***"
-    # --porcelain is to stop git sending output to stderr
-    git push $GitHubUrl HEAD:master --porcelain
+    $Params = @{
+        Path = "$env:BHProjectPath\CHANGELOG.md"
+        ReleaseVersion = $ReleaseVersion.ToString()
+        LinkMode = 'Automatic'
+        LinkPattern   = @{
+            FirstRelease  = "https://github.com/sk82jack/$ENV:BHProjectName/tree/v{CUR}"
+            NormalRelease = "https://github.com/sk82jack/$ENV:BHProjectName/compare/v{PREV}..v{CUR}"
+            Unreleased    = "https://github.com/sk82jack/$ENV:BHProjectName/compare/v{CUR}..HEAD"
+        }
+    }
+    Update-Changelog @Params
+    Convertfrom-Changelog -Path "$env:BHModulePath\CHANGELOG.md" -OutputPath "$DocFolder\ChangeLog.md"
     "`n"
 }
 
-Task Deploy -Depends Build {
+Task TestAfterBuild -Depends BuildDocs {
+    $lines
+    "`n`tSTATUS: Testing with PowerShell $PSVersion"
+
+    # Gather test results
+    $Params = @{
+        Path                   = "$ENV:BHProjectPath\Tests"
+        Show                   = 'Fails'
+        PassThru               = $true
+    }
+    $TestResults = Invoke-Pester @Params
+
+    # Failed tests?
+    # Need to tell psake or it will proceed to the deployment. Danger!
+    if ($TestResults.FailedCount -gt 0) {
+        Write-Error "Failed '$($TestResults.FailedCount)' tests, build failed"
+    }
+    "`n"
+}
+
+Task Deploy -Depends TestAfterBuild {
     $lines
 
     "`n`tTesting for PowerShell Gallery API key"
-    if (!$ENV:GITHUB_PAT) {
+    if (-not $ENV:PSREPO_APIKEY) {
         Write-Error "PowerShell Gallery API key not found"
     }
 
@@ -194,4 +217,18 @@ Task Deploy -Depends Build {
     }
     "`tInvoking PSDeploy"
     Invoke-PSDeploy @Verbose @Params
+
+    "`tSetting git repository url"
+    if (!$ENV:GITHUB_PAT) {
+        Write-Error "GitHub personal access token not found"
+    }
+    $GitHubUrl = 'https://{0}@github.com/sk82jack/PSFPL.git' -f $ENV:GITHUB_PAT
+
+    "`tDeploying built docs to GitHub"
+    git add "$env:BHProjectPath\docs\*"
+    git add "$env:BHProjectPath\mkdocs.yml"
+    git add "$env:BHProjectPath\CHANGELOG.md"
+    git commit -m "Bump version to $ReleaseVersion`n***NO_CI***"
+    # --porcelain is to stop git sending output to stderr
+    git push $GitHubUrl HEAD:master --porcelain
 }

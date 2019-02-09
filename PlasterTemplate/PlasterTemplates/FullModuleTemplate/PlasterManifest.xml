@@ -51,5 +51,6 @@
     <templateFile source='Contributing.md' destination='Contributing.md'/>
     <templateFile source='CHANGELOG.md' destination='CHANGELOG.md'/>
     <templateFile source='psake.ps1' destination='Build\psake.ps1'/>
+    <templateFile source='header-mkdocs.yml' destination='header-mkdocs.yml'/>
 	</content>
 </plasterManifest>

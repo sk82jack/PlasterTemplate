@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<plasterManifest
+  schemaVersion="1.0"
+  xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
+  <metadata>
+    <name>FullModuleTemplate</name>
+    <id>b8ebd5bc-b09f-4f2d-b24b-91d164f62c0c</id>
+    <version>0.1.0</version>
+    <title>Full Module Template</title>
+    <description></description>
+    <author>Jack Denton</author>
+    <tags></tags>
+  </metadata>
+  <parameters>
+    <parameter name="FullName" type="text" prompt="Module author's name" default="Jack Denton"/>
+    <parameter name="GitLabUserName" type="text" prompt="Module author's GitLab user account name" default="Jack.Denton"/>
+    <parameter name="GitLabEmail" type="text" prompt="Module author's GitLab email address">
+    <parameter name="ModuleName" type="text" prompt="Name of your module" />
+    <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
+    <parameter name="PSRepository" type="text" prompt="URL of the PowerShell repository" />
+  </parameters>
+  <content>
+	<message>      Creating folder structure    </message>
+    <file source='' destination='docs\images'/>
+    <file source='' destination='Tests'/>
+    <file source='' destination='Tests\Public'/>
+    <file source='' destination='Tests\Private'/>
+    <file source='' destination='Build'/>
+	  <file source='' destination='.vscode'/>
+    <file source='' destination='${PLASTER_PARAM_ModuleName}\Public'/>
+    <file source='' destination='${PLASTER_PARAM_ModuleName}\Private'/>
+    <message>      Deploying common files    </message>
+    <newModuleManifest
+		  destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1'
+		  moduleVersion='0.1.0'
+		  rootModule='${PLASTER_PARAM_ModuleName}.psm1'
+		  author='$PLASTER_PARAM_FullName'
+		  description='$PLASTER_PARAM_ModuleDesc'
+		  companyName='Public Health England'
+		  encoding='UTF8-NoBOM'/>
+    <file source='BasicTest.ps1' destination='Tests\${PLASTER_PARAM_ModuleName}.Tests.ps1'/>
+    <file source='Help.Tests.ps1' destination ='Tests\Help.Tests.ps1'/>
+    <file source='template.psm1' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1'/>
+    <file source='Template.Format.ps1xml' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.Format.ps1xml'/>
+    <file source='settings.json' destination='.vscode\settings.json'/>
+    <file source='Start-Build.ps1' destination='Build\Start-Build.ps1'/>
+    <file source='deploy.PSDeploy.ps1' destination='Build\deploy.PSDeploy.ps1'/>
+    <file source='build.requirements.psd1' destination='Build\build.requirements.psd1'/>
+    <file source='Install-PSDepend.ps1' destination='Build\Helpers\Install-PSDepend.ps1'/>
+    <file source='LICENSE' destination='LICENSE'/>
+    <file source='.gitlab-ci.yml' destination='.gitlab-ci.yml'/>
+    <file source='.gitignore' destination='.gitignore'/>
+    <file source='.gitattributes' destination='.gitattributes'/>
+    <templateFile source='README.md' destination='README.md'/>
+    <templateFile source='Contributing.md' destination='Contributing.md'/>
+    <templateFile source='CHANGELOG.md' destination='CHANGELOG.md'/>
+    <templateFile source='psake.ps1' destination='Build\psake.ps1'/>
+    <templateFile source='header-mkdocs.yml' destination='header-mkdocs.yml'/>
+	</content>
+</plasterManifest>

@@ -1,0 +1,21 @@
+stages:
+  - test
+  - setBuildVersion
+  - deploy
+test:
+  script:
+    - . .\Build\Start-Build.ps1 -Task Test -Verbose
+  stage: test
+  tags:
+    - Windows
+deploy:
+  only:
+    - tags
+  except:
+    - branches
+  script:
+    - . .\Build\Start-Build.ps1 -Task Deploy -Verbose
+  stage: deploy
+  tags:
+    - Windows
+  coverage: '/^Covered (\d+.\d+\%) of \d+ analyzed Commands in \d+ Files\.$/'

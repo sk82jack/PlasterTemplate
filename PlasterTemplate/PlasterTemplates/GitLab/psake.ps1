@@ -11,7 +11,7 @@ Properties {
     if ($ENV:BHCommitMessage -match "!verbose") {
         $Verbose = @{Verbose = $True}
     }
-    $PSRepository = <%= $PLASTER_PARAM_PSRepository %>
+    $PSRepository = '<%= $PLASTER_PARAM_PSRepository %>'
 
     git config user.email 'pipeline@example.com'
     git config user.name 'pipeline'
@@ -96,9 +96,9 @@ Task Build -Depends Test {
     # Set the module version from the release tag
     "`tUpdating the module manifest with the new version number"
     [version]$ReleaseVersion = git describe --tags
-    $GalleryVersion = Get-NextNugetPackageVersion -Name $env:BHProjectName -PackageSourceUrl $PSRepository-ErrorAction Stop
-    if ($ReleaseVersion -lt $GalleryVersion) {
-        Write-Error "Gallery version is higher than the release version. The release version must be increased"
+    $GalleryVersion = Find-Package -Name $env:BHProjectName -Source $PSRepository -ProviderName 'NuGet' -ErrorAction Stop
+    if ($ReleaseVersion -le [version]$GalleryVersion.Version) {
+        Write-Error "Gallery version is higher than or equal to the release version. The release version must be increased"
     }
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $ReleaseVersion -ErrorAction stop
     "`n"
@@ -150,10 +150,10 @@ Task BuildDocs -depends Build {
     }
 
     $Params = @{
-        Path = "$env:BHProjectPath\CHANGELOG.md"
+        Path           = "$env:BHProjectPath\CHANGELOG.md"
         ReleaseVersion = $ReleaseVersion.ToString()
-        LinkMode = 'Automatic'
-        LinkPattern   = @{
+        LinkMode       = 'Automatic'
+        LinkPattern    = @{
             FirstRelease  = "https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/tree/v{CUR}"
             NormalRelease = "https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/v{PREV}..v{CUR}"
             Unreleased    = "https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/v{CUR}..HEAD"

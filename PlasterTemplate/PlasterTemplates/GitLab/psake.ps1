@@ -106,13 +106,9 @@ Task Build -Depends Test {
 
 Task BuildDocs -depends Build {
     $lines
-    "`n`tImporting the module and start building the yaml"
     "`t`tImporting from '$env:BHPSModuleManifest'"
     Import-Module -Name $env:BHPSModuleManifest -Global -Force
     $DocFolder = "$env:BHProjectPath\docs"
-    $YMLtext = (Get-Content "$env:BHProjectPath\header-mkdocs.yml") -join "`r`n"
-    $YMLtext = "$YMLtext`r`n  - Change Log: ChangeLog.md`r`n"
-    $YMLText = "$YMLtext  - Functions:`r`n"
 
     "`tRemoving old documentation"
     $parameters = @{
@@ -133,14 +129,7 @@ Task BuildDocs -depends Build {
         OutputFolder = "$DocFolder\functions"
         NoMetadata   = $true
     }
-    New-MarkdownHelp @Params | foreach-object {
-        $Function = $_.Name -replace '\.md', ''
-        $Part = "    - {0}: functions/{1}" -f $Function, $_.Name
-        $YMLText = "{0}{1}`n" -f $YMLText, $Part
-        $Part
-    }
-    $YMLtext | Set-Content -Path "$env:BHProjectPath\mkdocs.yml"
-    Copy-Item -Path "$env:BHProjectPath\README.md" -Destination "$DocFolder\index.md" -Force
+    New-MarkdownHelp @Params
 
     [version]$ReleaseVersion = git describe --tags
 
@@ -224,7 +213,6 @@ Task Deploy -Depends TestAfterBuild {
 
     "`tPushing built docs to GitLab"
     git add "$env:BHProjectPath\docs\*"
-    git add "$env:BHModulePath\mkdocs.yml"
     git add "$env:BHModulePath\CHANGELOG.md"
     git commit -m "Bump version to $ReleaseVersion`n[ci skip]"
     # --porcelain is to stop git sending output to stderr

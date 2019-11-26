@@ -1,7 +1,0 @@
-site_name: PSFPL
-repo_url: https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>
-site_author: Jack Denton
-edit_uri: edit/master/docs/
-theme: readthedocs
-pages:
-  - Home: index.md

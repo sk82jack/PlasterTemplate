@@ -17,4 +17,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-[Unreleased]: https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>/compare/1.0.0...HEAD
+[Unreleased]: <%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>/compare/1.0.0...HEAD

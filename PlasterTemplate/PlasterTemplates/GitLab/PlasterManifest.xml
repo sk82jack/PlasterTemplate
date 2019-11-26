@@ -12,32 +12,36 @@
     <tags></tags>
   </metadata>
   <parameters>
-    <parameter name="FullName" type="text" prompt="Module author's name" default="Jack Denton"/>
-    <parameter name="GitLabUserName" type="text" prompt="Module author's GitLab user account name" default="Jack.Denton"/>
-    <parameter name="GitLabEmail" type="text" prompt="Module author's GitLab email address">
+    <parameter name="FullName" type="text" prompt="Module author's name" />
+    <parameter name="GitLabUserName" type="text" prompt="Module author's GitLab user account name" />
+    <parameter name="GitLabEmail" type="text" prompt="Module author's GitLab email address" />
+    <parameter name="GitLabURL" type="text" prompt="The URL of the GitLab server" />
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
-    <parameter name="PSRepository" type="text" prompt="URL of the PowerShell repository" />
+    <parameter name='PSRepository' type='choice' default='0' store='text' prompt='Do you want to deploy to a custom repository or the PSGallery?'>
+      <choice label='&amp;Custom repository' help="Deploy to a custom repository" value="CustomRepo"/>
+      <choice label='&amp;PSGallery' help="Deploy to the public PSGallery" value="PSGallery"/>
+    </parameter>
+    <parameter name='PSRepositoryURL' type='text' condition="$PLASTER_PARAM_PSRepository -eq 'CustomRepo'" prompt='Enter the URL for the custom repository'/>
   </parameters>
   <content>
-	<message>      Creating folder structure    </message>
+    <message>      Creating folder structure    </message>
     <file source='' destination='docs\images'/>
     <file source='' destination='Tests'/>
     <file source='' destination='Tests\Public'/>
     <file source='' destination='Tests\Private'/>
     <file source='' destination='Build'/>
-	  <file source='' destination='.vscode'/>
+    <file source='' destination='.vscode'/>
     <file source='' destination='${PLASTER_PARAM_ModuleName}\Public'/>
     <file source='' destination='${PLASTER_PARAM_ModuleName}\Private'/>
     <message>      Deploying common files    </message>
     <newModuleManifest
-		  destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1'
-		  moduleVersion='0.1.0'
-		  rootModule='${PLASTER_PARAM_ModuleName}.psm1'
-		  author='$PLASTER_PARAM_FullName'
-		  description='$PLASTER_PARAM_ModuleDesc'
-		  companyName='Public Health England'
-		  encoding='UTF8-NoBOM'/>
+      destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1'
+      moduleVersion='0.1.0'
+      rootModule='${PLASTER_PARAM_ModuleName}.psm1'
+      author='$PLASTER_PARAM_FullName'
+      description='$PLASTER_PARAM_ModuleDesc'
+      encoding='UTF8-NoBOM'/>
     <file source='BasicTest.ps1' destination='Tests\${PLASTER_PARAM_ModuleName}.Tests.ps1'/>
     <file source='Help.Tests.ps1' destination ='Tests\Help.Tests.ps1'/>
     <file source='template.psm1' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1'/>
@@ -55,6 +59,6 @@
     <templateFile source='Contributing.md' destination='Contributing.md'/>
     <templateFile source='CHANGELOG.md' destination='CHANGELOG.md'/>
     <templateFile source='psake.ps1' destination='Build\psake.ps1'/>
-    <templateFile source='header-mkdocs.yml' destination='header-mkdocs.yml'/>
+    <templateFile source='gitinit.ps1' destination='gitinit.ps1'/>
 	</content>
 </plasterManifest>

@@ -36,7 +36,14 @@ if (
     Deploy Module {
         By PSGalleryModule {
             FromSource $ENV:BHModulePath
-            To PSGallery
+            <%
+            if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
+                '            To InternalRepo'
+            }
+            else {
+                '            To PSGallery'
+            }
+            %>
             WithOptions @{
                 ApiKey = $ENV:NugetApiKey
             }
@@ -48,5 +55,5 @@ else {
     "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
     "`t* You are deploying from a tagged release (Current tag/branch: $ENV:BHBranchName)`n" +
     "`t* You have tagged the master branch (Tagged branches: $($Branches -join ', '))" |
-        Write-Error
+    Write-Error
 }

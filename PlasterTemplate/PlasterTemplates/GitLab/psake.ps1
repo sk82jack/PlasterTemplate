@@ -11,11 +11,50 @@ Properties {
     if ($ENV:BHCommitMessage -match "!verbose") {
         $Verbose = @{Verbose = $True}
     }
-    $PSRepository = '<%= $PLASTER_PARAM_PSRepository %>'
+    <%
+    if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
+        "    `$PSRepository = '$PLASTER_PARAM_PSRepositoryURL'"
+    }
+    %>
 
-    git config user.email 'pipeline@example.com'
-    git config user.name 'pipeline'
+    <#
+    $GitSettings = git config --list --show-origin
+    $GitName = ($GitSettings | Select-String -Pattern '^file:(.*?)\s+user\.name=(.*?)$').Matches.Groups
+    $GitEmail = ($GitSettings | Select-String -Pattern '^file:(.*?)\s+user\.email=(.*?)$').Matches.Groups
+    #>
 }
+
+<#
+TaskSetup {
+    if ($GitEmail -and $GitEmail[1].Value) {
+        git config -f $GitEmail[1].Value user.email 'pipeline@example.com'
+    }
+    else {
+        git config --global user.email 'pipeline@example.com'
+    }
+    if ($GitName -and $GitName[1].Value) {
+        git config -f $GitName[1].Value user.name 'pipeline'
+    }
+    else {
+        git config --global user.name 'pipeline@example.com'
+    }
+}
+
+TaskTearDown {
+    if ($GitEmail -and $GitEmail[2].Value) {
+        git config -f $GitEmail[1].Value user.email $GitEmail[2].Value
+    }
+    else {
+        git config --global --unset user.email
+    }
+    if ($GitName -and $GitName[2].Value) {
+        git config -f $GitName[1].Value user.name $GitName[2].Value
+    }
+    else {
+        git config --global --unset user.name
+    }
+}
+#>
 
 Task Default -Depends Test
 
@@ -143,9 +182,9 @@ Task BuildDocs -depends Build {
         ReleaseVersion = $ReleaseVersion.ToString()
         LinkMode       = 'Automatic'
         LinkPattern    = @{
-            FirstRelease  = "https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/tree/v{CUR}"
-            NormalRelease = "https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/v{PREV}..v{CUR}"
-            Unreleased    = "https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/v{CUR}..HEAD"
+            FirstRelease  = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/tree/v{CUR}"
+            NormalRelease = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/v{PREV}..v{CUR}"
+            Unreleased    = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/v{CUR}..HEAD"
         }
     }
     Update-Changelog @Params
@@ -186,19 +225,23 @@ Task Deploy -Depends TestAfterBuild {
         Write-Error "GitLab personal access token not found"
     }
 
-    # Register the ProGet repository if it's not already registered
-    $InternalRepo = Get-PSRepository -Name InternalRepo -ErrorAction SilentlyContinue
-    If ($InternalRepo) {
-        $InternalRepo | Unregister-PSRepository
+    <%
+    if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
+        "    # Register the ProGet repository if it's not already registered"
+        '    $InternalRepo = Get-PSRepository -Name InternalRepo -ErrorAction SilentlyContinue'
+        '    If ($InternalRepo) {'
+        '        $InternalRepo | Unregister-PSRepository'
+        '    }'
+        '    $RepositoryParams = @{'
+        '        ''Name''               = ''InternalRepo'''
+        '        ''SourceLocation''     = $PSRepository'
+        '        ''PublishLocation''    = $PSRepository'
+        '        ''InstallationPolicy'' = ''Trusted'''
+        '    }'
+        '    "`nAdding repository ''{0}''" -f $RepositoryParams.SourceLocation'
+        '    Register-PSRepository @RepositoryParams'
     }
-    $RepositoryParams = @{
-        'Name'               = 'InternalRepo'
-        'SourceLocation'     = $PSRepository
-        'PublishLocation'    = $PSRepository
-        'InstallationPolicy' = 'Trusted'
-    }
-    "`nAdding repository '{0}'" -f $RepositoryParams.SourceLocation
-    Register-PSRepository @RepositoryParams
+    %>
 
     $Params = @{
         Path    = "$ENV:BHProjectPath\Build"
@@ -208,6 +251,7 @@ Task Deploy -Depends TestAfterBuild {
     "`nInvoking PSDeploy"
     Invoke-PSDeploy @Verbose @Params
 
+    <#
     "`tSetting git repository url"
     $GitLabUrl = 'https://{0}@gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/{1}.git' -f $ENV:GitLab_PAT, $env:BHProjectName
 
@@ -218,4 +262,5 @@ Task Deploy -Depends TestAfterBuild {
     # --porcelain is to stop git sending output to stderr
     git push $GitLabUrl HEAD:master --porcelain
     "`n"
+    #>
 }

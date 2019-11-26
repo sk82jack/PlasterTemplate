@@ -8,7 +8,7 @@ There are a couple of ways you can help out.
 
 ## Issues
 ### Standard issues
-Opening issues is very easy. Head to the [Issues tab](https://gitlab.com/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>/issues) and open one if it does not exist already.
+Opening issues is very easy. Head to the [Issues tab](<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>/issues) and open one if it does not exist already.
 ### Bugs and errors
 If you encounter any errors then please supply the following information:
 1. The script or function that is causing the error.

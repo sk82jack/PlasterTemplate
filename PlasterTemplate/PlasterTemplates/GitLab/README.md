@@ -1,5 +1,5 @@
-[![pipeline status](https://gitlab.com/Jack.Denton/<%= $PLASTER_PARAM_ModuleName %>/badges/master/pipeline.svg)](https://gitlab.com/Jack.Denton/<%= $PLASTER_PARAM_ModuleName %>/commits/master)
-[![coverage report](https://gitlab.com/Jack.Denton/<%= $PLASTER_PARAM_ModuleName %>/badges/master/coverage.svg)](https://gitlab.com/Jack.Denton/<%= $PLASTER_PARAM_ModuleName %>/commits/master)
+[![pipeline status](<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>/badges/master/pipeline.svg)](<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>/commits/master)
+[![coverage report](<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>/badges/master/coverage.svg)](<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/<%= $PLASTER_PARAM_ModuleName %>/commits/master)
 # <%= $PLASTER_PARAM_ModuleName %>
 
 <%= $PLASTER_PARAM_ModuleDesc %>

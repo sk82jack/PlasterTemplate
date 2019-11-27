@@ -52,8 +52,10 @@ Function New-PlasterModule {
         Write-Verbose "Invoke-Plaster: Templatepath '$ProjectRoot\PlasterTemplates\$TemplateName' DestinationPath '$OutPath\$ModuleName'"
         Invoke-Plaster -TemplatePath $ModuleTemplate -DestinationPath $ModulePath
         Push-Location -Path $ModulePath
-        .\gitinit.ps1
+        . .\gitinit.ps1
         Remove-Item -Path '.\gitinit.ps1'
+        gitinit
+        Remove-Item -Path Function:\gitinit
         Pop-Location
 
         ''

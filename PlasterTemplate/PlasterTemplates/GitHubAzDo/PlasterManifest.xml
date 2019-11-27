@@ -23,17 +23,17 @@
     <file source='' destination='Tests\Public'/>
     <file source='' destination='Tests\Private'/>
     <file source='' destination='Build'/>
-	  <file source='' destination='.vscode'/>
+    <file source='' destination='.vscode'/>
     <file source='' destination='${PLASTER_PARAM_ModuleName}\Public'/>
     <file source='' destination='${PLASTER_PARAM_ModuleName}\Private'/>
     <message>      Deploying common files    </message>
     <newModuleManifest
-		  destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1'
-		  moduleVersion='0.1.0'
-		  rootModule='${PLASTER_PARAM_ModuleName}.psm1'
-		  author='$PLASTER_PARAM_FullName'
-		  description='$PLASTER_PARAM_ModuleDesc'
-		  encoding='UTF8-NoBOM'/>
+      destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1'
+      moduleVersion='0.1.0'
+      rootModule='${PLASTER_PARAM_ModuleName}.psm1'
+      author='$PLASTER_PARAM_FullName'
+      description='$PLASTER_PARAM_ModuleDesc'
+      encoding='UTF8-NoBOM'/>
     <file source='BasicTest.ps1' destination='Tests\${PLASTER_PARAM_ModuleName}.Tests.ps1'/>
     <file source='Help.Tests.ps1' destination ='Tests\Help.Tests.ps1'/>
     <file source='template.psm1' destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1'/>
@@ -43,7 +43,6 @@
     <file source='deploy.PSDeploy.ps1' destination='Build\deploy.PSDeploy.ps1'/>
     <file source='build.requirements.psd1' destination='Build\build.requirements.psd1'/>
     <file source='Install-PSDepend.ps1' destination='Build\Helpers\Install-PSDepend.ps1'/>
-    <file source='LICENSE' destination='LICENSE'/>
     <file source='azure-pipelines.yml' destination='azure-pipelines.yml'/>
     <file source='.gitignore' destination='.gitignore'/>
     <file source='.gitattributes' destination='.gitattributes'/>
@@ -52,5 +51,6 @@
     <templateFile source='CHANGELOG.md' destination='CHANGELOG.md'/>
     <templateFile source='psake.ps1' destination='Build\psake.ps1'/>
     <templateFile source='header-mkdocs.yml' destination='header-mkdocs.yml'/>
+    <templateFile source='LICENSE' destination='LICENSE'/>
 	</content>
 </plasterManifest>

@@ -50,7 +50,6 @@
     <file source='Start-Build.ps1' destination='Build\Start-Build.ps1'/>
     <file source='build.requirements.psd1' destination='Build\build.requirements.psd1'/>
     <file source='Install-PSDepend.ps1' destination='Build\Helpers\Install-PSDepend.ps1'/>
-    <file source='LICENSE' destination='LICENSE'/>
     <file source='.gitlab-ci.yml' destination='.gitlab-ci.yml'/>
     <file source='.gitignore' destination='.gitignore'/>
     <file source='.gitattributes' destination='.gitattributes'/>
@@ -60,5 +59,6 @@
     <templateFile source='psake.ps1' destination='Build\psake.ps1'/>
     <templateFile source='deploy.PSDeploy.ps1' destination='Build\deploy.PSDeploy.ps1'/>
     <templateFile source='gitinit.ps1' destination='gitinit.ps1'/>
+    <templateFile source='LICENSE' destination='LICENSE'/>
 	</content>
 </plasterManifest>

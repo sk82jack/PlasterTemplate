@@ -37,4 +37,10 @@ Do you want to deploy to a custom repository or the PSGallery?
 Enter the URL for the custom repository: http://proget.test.com
 ```
 
-At this point it will create your module. All that should be needed now is to create the repository on the Git server and then cd into the directory and run `git push -u origin master` to push the initial commit.
+At this point it will create your module.
+
+Following the module creation you will need to do the following steps:
+
+1. Create the repository on the Git server using the module name specified
+2. Add the PowerShell repository API key to your repository environment variables as the name `NugetAPIKey`
+3. cd into the directory of your new module and run `git push -u origin master` to push the initial commit up to the Git server

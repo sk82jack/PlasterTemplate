@@ -11,11 +11,11 @@ Properties {
     if ($ENV:BHCommitMessage -match "!verbose") {
         $Verbose = @{Verbose = $True}
     }
-    <%
+<%
     if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
         "    `$PSRepository = '$PLASTER_PARAM_PSRepositoryURL'"
     }
-    %>
+%>
 
     <#
     $GitSettings = git config --list --show-origin
@@ -227,7 +227,7 @@ Task Deploy -Depends TestAfterBuild {
     }
     #>
 
-    <%
+<%
     if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
         "    # Register the custom repository if it's not already registered"
         '    $InternalRepo = Get-PSRepository -Name InternalRepo -ErrorAction SilentlyContinue'
@@ -243,7 +243,7 @@ Task Deploy -Depends TestAfterBuild {
         '    "`nAdding repository ''{0}''" -f $RepositoryParams.SourceLocation'
         '    Register-PSRepository @RepositoryParams'
     }
-    %>
+%>
 
     $Params = @{
         Path    = "$ENV:BHProjectPath\Build"

@@ -1,6 +1,7 @@
-Remove-Module -Name $env:BHProjectName -Force -ErrorAction SilentlyContinue
-Import-Module -Name $env:BHPSModuleManifest
-
+if (-not $env:BHPSModuleManifest) {
+    Set-BuildEnvironment
+}
+Import-Module -Name $env:BHPSModuleManifest -Force
 Describe "Help tests for $env:BHProjectName" -Tags Build {
     $functions = Get-Command -Module $env:BHProjectName -CommandType Function
     foreach ($Function in $Functions) {

@@ -1,7 +1,8 @@
-Remove-Module -Name $env:BHProjectName -Force -ErrorAction SilentlyContinue
-
+if (-not $env:BHPSModuleManifest) {
+    Set-BuildEnvironment
+}
+Import-Module -Name $env:BHPSModuleManifest -Force
 Describe "General project validation: $env:BHProjectName" {
-
     $scripts = Get-ChildItem $env:BHPSModulePath -Include *.ps1, *.psm1, *.psd1 -Recurse
 
     # TestCases are splatted to the script so we need hashtables
@@ -10,7 +11,6 @@ Describe "General project validation: $env:BHProjectName" {
         param($file)
 
         $file.fullname | Should Exist
-
         $contents = Get-Content -Path $file.fullname -ErrorAction Stop
         $errors = $null
         $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)

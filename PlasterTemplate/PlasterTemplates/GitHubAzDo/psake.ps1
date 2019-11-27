@@ -208,9 +208,9 @@ Task BuildDocs -depends Build {
         ReleaseVersion = $ReleaseVersion.ToString()
         LinkMode       = 'Automatic'
         LinkPattern    = @{
-            FirstRelease  = "https://github.com/sk82jack/$ENV:BHProjectName/tree/v{CUR}"
-            NormalRelease = "https://github.com/sk82jack/$ENV:BHProjectName/compare/v{PREV}..v{CUR}"
-            Unreleased    = "https://github.com/sk82jack/$ENV:BHProjectName/compare/v{CUR}..HEAD"
+            FirstRelease  = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/tree/v{CUR}"
+            NormalRelease = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/compare/v{PREV}..v{CUR}"
+            Unreleased    = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/compare/v{CUR}..HEAD"
         }
     }
     Update-Changelog @Params
@@ -258,7 +258,7 @@ Task Deploy -Depends TestAfterBuild {
     if (!$ENV:GITHUB_PAT) {
         Write-Error "GitHub personal access token not found"
     }
-    $GitHubUrl = 'https://{0}@github.com/sk82jack/PSFPL.git' -f $ENV:GITHUB_PAT
+    $GitHubUrl = 'https://{0}@github.com/<%= $PLASTER_PARAM_GitHubUserName %>/PSFPL.git' -f $ENV:GITHUB_PAT
 
     "`tDeploying built docs to GitHub"
     git add "$env:BHProjectPath\docs\*"

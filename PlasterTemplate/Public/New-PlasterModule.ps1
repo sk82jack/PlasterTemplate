@@ -48,11 +48,18 @@ Function New-PlasterModule {
     Process {
         $ModulePath = Join-Path -Path $OutPath -ChildPath $ModuleName
         Write-Verbose "Creating module folder: $ModulePath"
-        New-Item -Path $ModulePath -ItemType 'Directory' -Force
+        $null = New-Item -Path $ModulePath -ItemType 'Directory' -Force
         Write-Verbose "Invoke-Plaster: Templatepath '$ProjectRoot\PlasterTemplates\$TemplateName' DestinationPath '$OutPath\$ModuleName'"
         Invoke-Plaster -TemplatePath $ModuleTemplate -DestinationPath $ModulePath
-        Set-Location $ModulePath
-        $Message = "Create an empty repo on the Git server called '$ModuleName' and then run the command 'git push -u origin master'"
-        Write-Host -Object $Message -ForegroundColor Green
+        Push-Location -Path $ModulePath
+        .\gitinit.ps1
+        Remove-Item -Path '.\gitinit.ps1'
+        Pop-Location
+
+        ''
+        $Message = "Module created at $ModulePath"
+        Write-Host $Message -ForegroundColor Green
+        $Message = "Now create an empty repo on the Git server called '$ModuleName' and then run the command 'git push -u origin master'"
+        Write-Host $Message -ForegroundColor Yellow
     }
 }

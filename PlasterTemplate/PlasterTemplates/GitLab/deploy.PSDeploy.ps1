@@ -36,14 +36,14 @@ if (
     Deploy Module {
         By PSGalleryModule {
             FromSource $ENV:BHModulePath
-            <%
+<%
             if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
                 '            To InternalRepo'
             }
             else {
                 '            To PSGallery'
             }
-            %>
+%>
             WithOptions @{
                 ApiKey = $ENV:NugetApiKey
             }

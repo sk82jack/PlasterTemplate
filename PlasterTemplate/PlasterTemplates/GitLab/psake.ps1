@@ -220,14 +220,16 @@ Task Deploy -Depends TestAfterBuild {
         Write-Error "PowerShell Gallery API key not found"
     }
 
+    <#
     "`tTesting for GitLab Personal Access Token"
     if (!$ENV:GitLab_PAT) {
         Write-Error "GitLab personal access token not found"
     }
+    #>
 
     <%
     if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
-        "    # Register the ProGet repository if it's not already registered"
+        "    # Register the custom repository if it's not already registered"
         '    $InternalRepo = Get-PSRepository -Name InternalRepo -ErrorAction SilentlyContinue'
         '    If ($InternalRepo) {'
         '        $InternalRepo | Unregister-PSRepository'

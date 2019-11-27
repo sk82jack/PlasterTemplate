@@ -7,7 +7,7 @@ Function New-PlasterModule {
 
         [Parameter()]
         [string]
-        $OutPath
+        $OutPath = $pwd.Path
     )
     DynamicParam {
         # Set the dynamic parameters' name

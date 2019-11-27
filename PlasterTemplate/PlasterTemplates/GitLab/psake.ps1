@@ -15,6 +15,9 @@ Properties {
     if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
         "    `$PSRepository = '$PLASTER_PARAM_PSRepositoryURL'"
     }
+    else {
+        "    `$PSRepository = 'https://www.powershellgallery.com/api/v2'"
+    }
 %>
 
     <#
@@ -215,9 +218,9 @@ Task TestAfterBuild -Depends BuildDocs {
 Task Deploy -Depends TestAfterBuild {
     $lines
 
-    "`n`tTesting for PowerShell Gallery API key"
+    "`n`tTesting for PowerShell repository API key"
     if (-not $ENV:NugetApiKey) {
-        Write-Error "PowerShell Gallery API key not found"
+        Write-Error "PowerShell repository API key not found"
     }
 
     <#

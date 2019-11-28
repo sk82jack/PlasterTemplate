@@ -220,9 +220,9 @@ Task BuildDocs -depends Build {
         ReleaseVersion = $ReleaseVersion.ToString()
         LinkMode       = 'Automatic'
         LinkPattern    = @{
-            FirstRelease  = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/tree/v{CUR}"
-            NormalRelease = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/compare/v{PREV}..v{CUR}"
-            Unreleased    = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/compare/v{CUR}..HEAD"
+            FirstRelease  = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/tree/{CUR}"
+            NormalRelease = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/compare/{PREV}..{CUR}"
+            Unreleased    = "https://github.com/<%= $PLASTER_PARAM_GitHubUserName %>/$ENV:BHProjectName/compare/{CUR}..HEAD"
         }
     }
     Update-Changelog @Params

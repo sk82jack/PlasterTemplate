@@ -197,9 +197,9 @@ Task BuildDocs -depends Build {
         ReleaseVersion = $ReleaseVersion.ToString()
         LinkMode       = 'Automatic'
         LinkPattern    = @{
-            FirstRelease  = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/tree/v{CUR}"
-            NormalRelease = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/v{PREV}..v{CUR}"
-            Unreleased    = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/v{CUR}..HEAD"
+            FirstRelease  = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/tree/{CUR}"
+            NormalRelease = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/{PREV}..{CUR}"
+            Unreleased    = "<%= $PLASTER_PARAM_GitLabURL %>/<%= $PLASTER_PARAM_GitLabUserName %>/$env:BHProjectName/compare/{CUR}..HEAD"
         }
     }
     Update-Changelog @Params

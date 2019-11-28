@@ -16,11 +16,16 @@
     <parameter name="GitLabUserName" type="text" prompt="Module author's GitLab user account name" />
     <parameter name="GitLabEmail" type="text" prompt="Module author's GitLab email address" />
     <parameter name="GitLabURL" type="text" prompt="The URL of the GitLab server" />
+    <parameter name="GitLabHostname" type="text" prompt="The Hostname or IP of the GitLab server, without http(s):// or /" />
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
     <parameter name='PSRepository' type='choice' default='0' store='text' prompt='Do you want to deploy to a custom repository or the PSGallery?'>
       <choice label='&amp;Custom repository' help="Deploy to a custom repository" value="CustomRepo"/>
       <choice label='&amp;PSGallery' help="Deploy to the public PSGallery" value="PSGallery"/>
+    </parameter>
+    <parameter name='DeployDocs' type='choice' default='0' store='text' prompt='Do you want to deploy docs with mkDocs?'>
+      <choice label='&amp;Yes' help="Deploy docs with mkDocs" value="Y"/>
+      <choice label='&amp;No' help="Do not deploy docs with mkDocs" value="N"/>
     </parameter>
     <parameter name='PSRepositoryURL' type='text' condition="$PLASTER_PARAM_PSRepository -eq 'CustomRepo'" prompt='Enter the URL for the custom repository'/>
   </parameters>

@@ -20,23 +20,16 @@ Properties {
     }
 %>
 <%
-    if ($PLASTER_PARAM_DeployDocs -eq 'Y') {
+    if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {
         '   $GitSettings = git config --list --show-origin'
         '   $GitName = ($GitSettings | Select-String -Pattern ''^file:(.*?)\s+user\.name=(.*?)$'').Matches.Groups'
         '   $GitEmail = ($GitSettings | Select-String -Pattern ''^file:(.*?)\s+user\.email=(.*?)$'').Matches.Groups'
-    }
-    else {
-        '   <#'
-        '   $GitSettings = git config --list --show-origin'
-        '   $GitName = ($GitSettings | Select-String -Pattern ''^file:(.*?)\s+user\.name=(.*?)$'').Matches.Groups'
-        '   $GitEmail = ($GitSettings | Select-String -Pattern ''^file:(.*?)\s+user\.email=(.*?)$'').Matches.Groups'
-        '   #>'
     }
 %>
 }
 
 <%
-    if ($PLASTER_PARAM_DeployDocs -eq 'Y') {
+    if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {
         '   TaskSetup {'
         '       if ($GitEmail -and $GitEmail[1].Value) {'
         '           git config -f $GitEmail[1].Value user.email ''pipeline@example.com'''
@@ -66,39 +59,6 @@ Properties {
         '           git config --global --unset user.name'
         '       }'
         '   }'
-    }
-    else {
-        '   <#'
-        '   TaskSetup {'
-        '       if ($GitEmail -and $GitEmail[1].Value) {'
-        '           git config -f $GitEmail[1].Value user.email ''pipeline@example.com'''
-        '       }'
-        '       else {'
-        '           git config --global user.email ''pipeline@example.com'''
-        '       }'
-        '       if ($GitName -and $GitName[1].Value) {'
-        '           git config -f $GitName[1].Value user.name ''pipeline'''
-        '       }'
-        '       else {'
-        '           git config --global user.name ''pipeline@example.com'''
-        '       }'
-        '   }'
-
-        '   TaskTearDown {'
-        '       if ($GitEmail -and $GitEmail[2].Value) {'
-        '           git config -f $GitEmail[1].Value user.email $GitEmail[2].Value'
-        '       }'
-        '       else {'
-        '           git config --global --unset user.email'
-        '       }'
-        '       if ($GitName -and $GitName[2].Value) {'
-        '           git config -f $GitName[1].Value user.name $GitName[2].Value'
-        '       }'
-        '       else {'
-        '           git config --global --unset user.name'
-        '       }'
-        '   }'
-        '   #>'
     }
 %>
 
@@ -280,19 +240,11 @@ Task Deploy -Depends TestAfterBuild {
 
 
 <%
-    if ($PLASTER_PARAM_DeployDocs -eq 'Y') {
+    if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {
         '   "`tTesting for GitLab Personal Access Token"'
         '   if (!$ENV:GitLab_PAT) {'
         '       Write-Error "GitLab personal access token not found"'
         '   }'
-    }
-    else {
-        '   <#'
-        '   "`tTesting for GitLab Personal Access Token"'
-        '   if (!$ENV:GitLab_PAT) {'
-        '       Write-Error "GitLab personal access token not found"'
-        '   }'
-        '   #>'
     }
 %>
 <%
@@ -322,7 +274,7 @@ Task Deploy -Depends TestAfterBuild {
     Invoke-PSDeploy @Verbose @Params
 
 <%
-    if ($PLASTER_PARAM_DeployDocs -eq 'Y') {
+    if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {
         '   "`tSetting git repository url"'
         '   # This may need to be changed if your gitlab server does not use HTTPS'
         '   $GitLabUrl = ''https://oauth2:{0}@<%= $PLASTER_PARAM_GitLabHostname %>/<%= $PLASTER_PARAM_GitLabUserName %>/{1}.git'' -f $ENV:GitLab_PAT, $env:BHProjectName'
@@ -335,22 +287,6 @@ Task Deploy -Depends TestAfterBuild {
         '   # --porcelain is to stop git sending output to stderr'
         '   git push $GitLabUrl HEAD:master --porcelain'
         '   "`n"'
-    }
-    else {
-        '   <#'
-        '   "`tSetting git repository url"'
-        '   # This may need to be changed if your gitlab server does not use HTTPS'
-        '   $GitLabUrl = ''https://oauth2:{0}@<%= $PLASTER_PARAM_GitLabHostname %>/<%= $PLASTER_PARAM_GitLabUserName %>/{1}.git'' -f $ENV:GitLab_PAT, $env:BHProjectName'
-        '   # Get the release version for the commit message'
-        '   [version]$ReleaseVersion = git describe --tags'
-        '   "`tPushing built docs to GitLab"'
-        '   git add "$env:BHProjectPath\docs\*"'
-        '   git add "$env:BHProjectPath\CHANGELOG.md"'
-        '   git commit -m "Bump version to $ReleaseVersion`n[ci skip]"'
-        '   # --porcelain is to stop git sending output to stderr'
-        '   git push $GitLabUrl HEAD:master --porcelain'
-        '   "`n"'
-        '   #>'
     }
 %>
 }

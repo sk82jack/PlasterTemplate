@@ -35,7 +35,12 @@ Brief description on this module: Test module
 Do you want to deploy to a custom repository or the PSGallery?
 [C] Custom repository  [P] PSGallery  [?] Help (default is "C"): c
 Enter the URL for the custom repository: http://proget.test.com
+Do you want to deploy docs with mkDocs?
+[No] Do not deploy docs with mkDocs [Yes] Deploy docs with mkDocs [?] Help (default is "No"): yes
 ```
+
+If you choose to deploy docs with mkDocs, you will need to ensure that your GitLab-CI running has access to a Personal Access Token via a variable.
+
 
 At this point it will create your module.
 

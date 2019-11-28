@@ -44,3 +44,9 @@ Following the module creation you will need to do the following steps:
 1. Create the repository on the Git server using the module name specified
 2. Add the PowerShell repository API key to your repository environment variables as the name `NugetAPIKey`
 3. cd into the directory of your new module and run `git push -u origin master` to push the initial commit up to the Git server
+
+To create a deployment you need to tag a commit with the release version and then push that tag to the git server. So, if you was deploying version 0.1.0 you would do the following:
+```ps
+git tag 0.1.0
+git push origin 0.1.0
+```

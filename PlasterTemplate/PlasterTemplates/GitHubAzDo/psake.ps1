@@ -150,7 +150,19 @@ Task Build -Depends Test {
     # Set the module version from the release tag
     "`tUpdating the module manifest with the new version number"
     [version]$ReleaseVersion = git describe --tags
-    $GalleryVersion = Get-NextNugetPackageVersion -Name $env:BHProjectName -ErrorAction Stop
+    try {
+        $GalleryVersion = Find-Package -Name $env:BHProjectName -Source $PSRepository -ProviderName 'NuGet' -ErrorAction 'Stop'
+    }
+    catch {
+        if ($_.Exception.Message -match "^No match was found for the specified search criteria and package name '$env:BHProjectName'\.") {
+            $GalleryVersion = [PSCustomObject]@{
+                Version = '0.0.0'
+            }
+        }
+        else {
+            throw $_
+        }
+    }
     if ($ReleaseVersion -le $GalleryVersion) {
         Write-Error "Gallery version is higher than the release version. The release version must be increased"
     }

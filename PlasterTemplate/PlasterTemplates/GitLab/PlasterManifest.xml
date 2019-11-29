@@ -12,9 +12,9 @@
     <tags></tags>
   </metadata>
   <parameters>
-    <parameter name="FullName" type="text" prompt="Module author's name" />
+    <parameter name="FullName" type="user-fullname" prompt="Module author's name" />
+    <parameter name="Email" type="user-fullname" prompt="Module author's email address" />
     <parameter name="GitLabUserName" type="text" prompt="Module author's GitLab user account name" />
-    <parameter name="GitLabEmail" type="text" prompt="Module author's GitLab email address" />
     <parameter name="GitLabURL" type="text" prompt="The URL of the GitLab server" />
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />

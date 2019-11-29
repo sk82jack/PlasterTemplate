@@ -7,7 +7,35 @@ Function New-PlasterModule {
 
         [Parameter()]
         [string]
-        $OutPath = $pwd.Path
+        $OutPath = $pwd.Path,
+
+        [Parameter()]
+        [string]
+        $FullName,
+
+        [Parameter()]
+        [string]
+        $EmailAddress,
+
+        [Parameter()]
+        [string]
+        $GitServerUsername,
+
+        [Parameter()]
+        [string]
+        $GitServerURL,
+
+        [Parameter()]
+        [string]
+        $ModuleDescription,
+
+        [Parameter()]
+        [string]
+        $PSRepository,
+
+        [Parameter()]
+        [switch]
+        $DeployDocs
     )
     DynamicParam {
         # Set the dynamic parameters' name
@@ -47,10 +75,51 @@ Function New-PlasterModule {
     }
     Process {
         $ModulePath = Join-Path -Path $OutPath -ChildPath $ModuleName
+
         Write-Verbose "Creating module folder: $ModulePath"
         $null = New-Item -Path $ModulePath -ItemType 'Directory' -Force
+
         Write-Verbose "Invoke-Plaster: Templatepath '$ProjectRoot\PlasterTemplates\$TemplateName' DestinationPath '$OutPath\$ModuleName'"
-        Invoke-Plaster -TemplatePath $ModuleTemplate -DestinationPath $ModulePath
+        $InvokePlasterSplat = @{
+            TemplatePath = $ModuleTemplate
+            DestinationPath = $ModulePath
+            ModuleName = $ModuleName
+        }
+        if ($FullName) {
+            $InvokePlasterSplat['FullName'] = $FullName
+        }
+        if ($EmailAddress) {
+            $InvokePlasterSplat['Email'] = $EmailAddress
+        }
+        if ($GitServerUsername) {
+            if ($PsBoundParameters['TemplateName'] -match 'GitLab') {
+                $InvokePlasterSplat['GitLabUsername'] = $GitServerUsername
+            }
+            else {
+                $InvokePlasterSplat['GitHubUsername'] = $GitServerUsername
+            }
+        }
+        if ($GitServerURL -and $PsBoundParameters['TemplateName'] -match 'GitLab') {
+            $InvokePlasterSplat['GitLabURL'] = $GitServerURL
+        }
+        if ($ModuleDescription) {
+            $InvokePlasterSplat['ModuleDesc'] = $ModuleDescription
+        }
+        if ($PSRepository -match 'PSGallery') {
+            $InvokePlasterSplat['PSRepository'] = 'PSGallery'
+        }
+        else {
+            $InvokePlasterSplat['PSRepository'] = 'CustomRepo'
+            $InvokePlasterSplat['PSRepositoryURL'] = $PSRepository
+        }
+        if ($DeployDocs) {
+            $InvokePlasterSplat['DeployDocs'] = 'Yes'
+        }
+        else {
+            $InvokePlasterSplat['DeployDocs'] = 'No'
+        }
+        Invoke-Plaster @invokePlasterSplat
+
         Push-Location -Path $ModulePath
         . .\gitinit.ps1
         Remove-Item -Path '.\gitinit.ps1'

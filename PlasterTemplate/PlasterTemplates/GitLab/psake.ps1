@@ -277,20 +277,20 @@ Task Deploy -Depends TestAfterBuild {
     if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {
         '   "`tSetting git repository url"'
         '   # This may need to be changed if your gitlab server does not use HTTPS'
-        '   $GitLabURL = [uri]$PLASTER_PARAM_GitLabURL'
-        '   if ($GitLabURL.Scheme) {'
-        '       $GitLabProtocol = $GitLabURL.Scheme'
-        '   }'
-        '   else {'
-        '       $GitLabProtocol = ''https'''
-        '   }'
-        '   if ($GitLabURL.Host) {'
-        '       $GitLabHost = $GitLabURL.Host'
-        '   }'
-        '   else {'
-        '       $GitLabHost = $GitLabURL.OriginalString'
-        '   }'
-        "    `$GitLabUrl = '$($GitLabProtocol)://oauth2:{0}@$($GitLabHost)/$($PLASTER_PARAM_GitLabUserName)/{1}.git' -f $env:GitLab_PAT, $env:BHProjectName"
+        $GitLabURL = [uri]$PLASTER_PARAM_GitLabURL
+        if ($GitLabURL.Scheme) {
+        $GitLabProtocol = $GitLabURL.Scheme
+        }
+        else {
+            $GitLabProtocol = https
+        }
+        if ($GitLabURL.Host) {
+            $GitLabHost = $GitLabURL.Host
+        }
+        else {
+            $GitLabHost = $GitLabURL.OriginalString
+        }
+        "    `$GitLabUrl = '$($GitLabProtocol)://oauth2:{0}@$($GitLabHost)/$($PLASTER_PARAM_GitLabUserName)/{1}.git' -f `$env:GitLab_PAT, `$env:BHProjectName"
         '   [version]$ReleaseVersion = git describe --tags'
         '   "`tPushing built docs to GitLab"'
         '   git add "$env:BHProjectPath\docs\*"'

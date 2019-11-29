@@ -27,7 +27,6 @@
       <choice label='&amp;No' help="Do not deploy docs with mkDocs" value="No"/>
       <choice label='&amp;Yes' help="Deploy docs with mkDocs" value="Yes"/>
     </parameter>
-    <parameter name="GitLabHostname" type="text" condition="$PLASTER_PARAM_DeployDocs -eq 'Yes'" prompt="The Hostname or IP of the GitLab server (without http(s):// or trailing /)" default="gitlab.com" />
   </parameters>
   <content>
     <message>      Creating folder structure    </message>

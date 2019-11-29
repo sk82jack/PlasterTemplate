@@ -11,6 +11,7 @@ Properties {
     if ($ENV:BHCommitMessage -match "!verbose") {
         $Verbose = @{Verbose = $True}
     }
+
 <%
     if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
         "    `$PSRepository = '$PLASTER_PARAM_PSRepositoryURL'"
@@ -19,6 +20,7 @@ Properties {
         "    `$PSRepository = 'https://www.powershellgallery.com/api/v2'"
     }
 %>
+
 <%
     if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {
         '    $GitSettings = git config --list --show-origin'
@@ -237,7 +239,6 @@ Task Deploy -Depends TestAfterBuild {
     if (-not $ENV:NugetApiKey) {
         Write-Error "PowerShell repository API key not found"
     }
-
 
 <%
     if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {

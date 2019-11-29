@@ -12,6 +12,15 @@ Properties {
         $Verbose = @{Verbose = $True}
     }
 
+<%
+    if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
+        "    `$PSRepository = '$PLASTER_PARAM_PSRepositoryURL'"
+    }
+    else {
+        "    `$PSRepository = 'https://www.powershellgallery.com/api/v2'"
+    }
+%>
+
     $GitSettings = git config --list --show-origin
     $GitName = ($GitSettings | Select-String -Pattern '^file:(.*?)\s+user\.name=(.*?)$').Matches.Groups
     $GitEmail = ($GitSettings | Select-String -Pattern '^file:(.*?)\s+user\.email=(.*?)$').Matches.Groups
@@ -127,6 +136,9 @@ Task Build -Depends Test {
         [void]$Stringbuilder.AppendLine("Write-Verbose 'Importing from [$env:BHModulePath\$Folder]'" )
         if (Test-Path "$env:BHModulePath\$Folder") {
             $Files = Get-ChildItem "$env:BHModulePath\$Folder\*.ps1"
+            if ($Folder -eq 'Public') {
+                $PublicFunctions = $Files.BaseName
+            }
             foreach ($File in $Files) {
                 $Name = $File.Name
                 "`tImporting [.$Name]"
@@ -143,7 +155,7 @@ Task Build -Depends Test {
 
     # Load the module, read the exported functions & aliases, update the psd1 FunctionsToExport & AliasesToExport
     "`tSetting module functions"
-    Set-ModuleFunctions
+    Set-ModuleFunctions -FunctionsToExport $PublicFunctions
     "`tSetting module aliases"
     Set-ModuleAliases
 
@@ -253,10 +265,37 @@ Task TestAfterBuild -Depends BuildDocs {
 Task Deploy -Depends TestAfterBuild {
     $lines
 
-    "`n`tTesting for PowerShell Gallery API key"
-    if (-not $ENV:PSREPO_APIKEY) {
-        Write-Error "PowerShell Gallery API key not found"
+    "`n`tTesting for PowerShell repository API key"
+    if (-not $ENV:NugetApiKey) {
+        Write-Error "PowerShell repository API key not found"
     }
+
+<%
+    if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {
+        '    "`tTesting for GitHub Personal Access Token"'
+        '    if (!$ENV:GITHUB_PAT) {'
+        '        Write-Error "GitHub personal access token not found"'
+        '    }'
+    }
+%>
+
+<%
+    if ($PLASTER_PARAM_PSRepository -eq 'CustomRepo') {
+        "    # Register the custom repository if it's not already registered"
+        '    $InternalRepo = Get-PSRepository -Name InternalRepo -ErrorAction SilentlyContinue'
+        '    If ($InternalRepo) {'
+        '        $InternalRepo | Unregister-PSRepository'
+        '    }'
+        '    $RepositoryParams = @{'
+        '        ''Name''               = ''InternalRepo'''
+        '        ''SourceLocation''     = $PSRepository'
+        '        ''PublishLocation''    = $PSRepository'
+        '        ''InstallationPolicy'' = ''Trusted'''
+        '    }'
+        '    "`nAdding repository ''{0}''" -f $RepositoryParams.SourceLocation'
+        '    Register-PSRepository @RepositoryParams'
+    }
+%>
 
     $Params = @{
         Path    = "$ENV:BHProjectPath\Build"
@@ -266,17 +305,18 @@ Task Deploy -Depends TestAfterBuild {
     "`tInvoking PSDeploy"
     Invoke-PSDeploy @Verbose @Params
 
-    "`tSetting git repository url"
-    if (!$ENV:GITHUB_PAT) {
-        Write-Error "GitHub personal access token not found"
+<%
+    if ($PLASTER_PARAM_DeployDocs -eq 'Yes') {
+        '    "`tSetting git repository url"'
+        "    `$GitHubUrl = 'https://{0}@github.com/$($PLASTER_PARAM_GitHubUserName)/{1}.git' -f `$env:GITHUB_PAT, `$env:BHProjectName"
+        '    [version]$ReleaseVersion = git describe --tags'
+        '    "`tPushing built docs to GitLab"'
+        '    git add "$env:BHProjectPath\docs\*"'
+        '    git add "$env:BHProjectPath\CHANGELOG.md"'
+        '    git commit -m "Bump version to $ReleaseVersion`n[ci skip]"'
+        '    # --porcelain is to stop git sending output to stderr'
+        '    git push $GitLabUrl HEAD:master --porcelain'
+        '    "`n"'
     }
-    $GitHubUrl = 'https://{0}@github.com/<%= $PLASTER_PARAM_GitHubUserName %>/PSFPL.git' -f $ENV:GITHUB_PAT
-
-    "`tDeploying built docs to GitHub"
-    git add "$env:BHProjectPath\docs\*"
-    git add "$env:BHProjectPath\mkdocs.yml"
-    git add "$env:BHProjectPath\CHANGELOG.md"
-    git commit -m "Bump version to $ReleaseVersion`n***NO_CI***"
-    # --porcelain is to stop git sending output to stderr
-    git push $GitHubUrl HEAD:master --porcelain
+%>
 }

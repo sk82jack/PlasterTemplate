@@ -23,6 +23,10 @@
       <choice label='&amp;PSGallery' help="Deploy to the public PSGallery" value="PSGallery"/>
     </parameter>
     <parameter name='PSRepositoryURL' type='text' condition="$PLASTER_PARAM_PSRepository -eq 'CustomRepo'" prompt='Enter the URL for the custom repository'/>
+    <parameter name='DeployDocs' type='choice' default='0' store='text' prompt='Do you want to deploy docs with mkDocs?'>
+      <choice label='&amp;No' help="Do not deploy docs with mkDocs" value="No"/>
+      <choice label='&amp;Yes' help="Deploy docs with mkDocs" value="Yes"/>
+    </parameter>
   </parameters>
   <content>
     <message>      Creating folder structure    </message>

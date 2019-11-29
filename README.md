@@ -35,7 +35,12 @@ Brief description on this module: Test module
 Do you want to deploy to a custom repository or the PSGallery?
 [C] Custom repository  [P] PSGallery  [?] Help (default is "C"): c
 Enter the URL for the custom repository: http://proget.test.com
+Do you want to deploy docs with mkDocs?
+[No] Do not deploy docs with mkDocs [Yes] Deploy docs with mkDocs [?] Help (default is "No"): yes
 ```
+
+If you choose to deploy docs with mkDocs, you will need to ensure that your GitLab-CI running has access to a Personal Access Token via a variable.
+
 
 At this point it will create your module.
 
@@ -45,7 +50,7 @@ Following the module creation you will need to do the following steps:
 2. Add the PowerShell repository API key to your repository environment variables as the name `NugetAPIKey`
 3. cd into the directory of your new module and run `git push -u origin master` to push the initial commit up to the Git server
 
-To create a deployment you need to tag a commit with the release version and then push that tag to the git server. So, if you was deploying version 0.1.0 you would do the following:
+To create a deployment you need to tag a commit with the release version and then push that tag to the git server. So, if you were deploying version 0.1.0 you would do the following:
 ```ps
 git tag 0.1.0
 git push origin 0.1.0

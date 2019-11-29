@@ -281,7 +281,7 @@ Task Deploy -Depends TestAfterBuild {
         $GitLabProtocol = $GitLabURL.Scheme
         }
         else {
-            $GitLabProtocol = https
+            $GitLabProtocol = 'https'
         }
         if ($GitLabURL.Host) {
             $GitLabHost = $GitLabURL.Host

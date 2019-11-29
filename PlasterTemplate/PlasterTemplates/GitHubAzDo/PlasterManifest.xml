@@ -10,11 +10,20 @@
     <tags></tags>
   </metadata>
   <parameters>
-    <parameter name="FullName" type="text" prompt="Module author's name" />
+    <parameter name="FullName" type="user-fullname" prompt="Module author's name" />
+    <parameter name="Email" type="user-fullname" prompt="Module author's GitLab email address" />
     <parameter name="GitHubUserName" type="text" prompt="Module author's GitHub user account name" />
-    <parameter name="GitHubEmail" type="text" prompt="Module author's GitHub email address" />
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
+    <parameter name='PSRepository' type='choice' default='0' store='text' prompt='Do you want to deploy to a custom repository or the PSGallery?'>
+      <choice label='&amp;Custom repository' help="Deploy to a custom repository" value="CustomRepo"/>
+      <choice label='&amp;PSGallery' help="Deploy to the public PSGallery" value="PSGallery"/>
+    </parameter>
+    <parameter name='PSRepositoryURL' type='text' condition="$PLASTER_PARAM_PSRepository -eq 'CustomRepo'" prompt='Enter the URL for the custom repository'/>
+    <parameter name='DeployDocs' type='choice' default='0' store='text' prompt='Do you want to deploy docs with mkDocs?'>
+      <choice label='&amp;No' help="Do not deploy docs with mkDocs" value="No"/>
+      <choice label='&amp;Yes' help="Deploy docs with mkDocs" value="Yes"/>
+    </parameter>
   </parameters>
   <content>
 	<message>      Creating folder structure    </message>

@@ -39,7 +39,7 @@ Do you want to deploy docs with mkDocs?
 [No] Do not deploy docs with mkDocs [Yes] Deploy docs with mkDocs [?] Help (default is "No"): yes
 ```
 
-Note: If you choose to deploy docs with mkDocs, you will need to ensure that your GitLab-CI running has access to a Personal Access Token via a variable.
+**Note:** If you choose to deploy docs with mkDocs, you will need to ensure that your GitLab-CI running has access to a Personal Access Token via a variable.
 
 
 At this point it will create your module.
@@ -55,5 +55,5 @@ To create a deployment you need to tag a commit with the release version and the
 git tag 0.1.0
 git push origin 0.1.0
 ```
-To view the coverage report as a badge in the readme, you need to update your "Test coverage parsing" setting at Settings > CI/CD > General pipelines for your repository.
+To view the coverage report as a badge in the readme of your project, you need to update your "Test coverage parsing" setting at Settings > CI/CD > General pipelines for your repository.
 <!-- Add recommended regex settings for "'/^Covered (\d+.\d+\%) of \d+ analyzed Commands in \d+ Files\.$/'" here. -->

@@ -55,5 +55,4 @@ To create a deployment you need to tag a commit with the release version and the
 git tag 0.1.0
 git push origin 0.1.0
 ```
-To view the coverage report as a badge in the readme of your project, you need to update your "Test coverage parsing" setting at Settings > CI/CD > General pipelines for your repository.
-<!-- Add recommended regex settings for "'/^Covered (\d+.\d+\%) of \d+ analyzed Commands in \d+ Files\.$/'" here. -->
+To view the coverage report for all commits as a badge in the readme of your project, you need to update your "Test coverage parsing" setting at Settings > CI/CD > General pipelines for your repository. The regex for this can be found in the .gitlab-ci.yml file, near the bottom. You can find more information [here](https://docs.gitlab.com/ee/ci/yaml/#coverage).
